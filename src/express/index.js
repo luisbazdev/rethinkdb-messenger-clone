@@ -1,11 +1,8 @@
-var express = require('express');
-var app = express();
-
 require('dotenv').config();
 
+var { httpServer } = require('./server');
 
-var router = require('./router');
-
-app.use('/api', router);
-
-app.listen(process.env.PORT);
+/**
+ * Run the HTTP server
+ */
+httpServer.listen(process.env.PORT);

@@ -1,50 +1,77 @@
 var express = require('express');
 
-var rethinkdb = require('rethinkdb');
+var { io } = require('./server');
+var db = require('./db');
 
-var db = rethinkdb.connect({db: process.env.DATABASE});
+module.exports = router = express.Router();
 
-var router = express.Router();
+var connection;
 
-// Work on this
-router.get('/messages', (req, res) => {
-    var { from, target } = req.body;
+/**
+ * Try to connect to RethinkDB
+ */
+db.then((conn) => {
+    connection = conn;
 
-    db.then((conn) => {
-        rethinkdb.table('messages').filter({from, target}).limit(15).run(conn, (err, cursor) => {
-            // Return the cursor here
+    /**
+     * Query a few messages and listen
+     * for new records in the database and
+     * notify users through a Socket.IO event
+     */
+    router.get('/messages', (req, res) => {
+        // Get both participants UID from request body
+        var { from, target } = req.body;
+        
+        // Initialize a changefeed in the 'messages' table and query
+        // record where either the current user's UID is the sender or
+        // the target, and the opposite side is 'target'
+        db.table('messages').filter({...}).changes().run(connection, (err, cursor) => {
+            cursor.each((err, row) => {
+                // Send new messages to both sender and target
+                io.to(from).to(target).emit('received message', row);
+        	});
         });
-    });
-})
 
-router.post('/messages', (req, res) => {
-    var { from, target, message } = req.body;
+        res.status(200).end();
+    })
 
-    db.then((conn) => {
-        rethinkdb.table('messages').insert({
+    /**
+     * Insert a new record in the 'messages' table
+     */
+    router.post('/messages', (req, res) => {
+        // Get both participants UID and the message itself from request body
+        var { from, target, message } = req.body;
+    
+        db.table('messages').insert({
             from,
             target,
             message,
-        }).run(conn);
+        }).run(connection);
+    
+        res.status(201).end();
     });
+    
+    /**
+     * Edit a record in the 'messages' table
+     */
+    router.patch('/messages', (req, res) => {
+        // Get the ID of the message to update and the new content from request body
+        var { id, message } = req.body;
+    
+        db.table('messages').get(id).update({message}).run(connection);
 
-    res.status(201).end();
-})
-
-router.patch('/messages', (req, res) => {
-    var { id, message } = req.body;
-
-    db.then((conn) => {
-        rethinkdb.table('messages').get(id).update(message).run(conn);
+        res.status(200).end();
     });
-})
+    
+    /**
+     * Delete a record in the 'messages' table
+     */
+    router.delete('/messages', (req, res) => {
+        // Get the ID of the message to delete
+        var { id } = req.body;
+    
+        db.table('messages').get(id).delete().run(connection);
 
-router.delete('/messages', (req, res) => {
-    var { id } = req.body;
-
-    db.then((conn) => {
-        rethinkdb.table('messages').get(id).delete().run(conn);
+        res.status(200).end();
     });
-})
-
-module.exports = router;
+});
