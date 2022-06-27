@@ -30,29 +30,13 @@ var { createServer } = require("http");
 var httpServer = createServer(app);
 
 /**
- * Initialize new WebSockets server
- */ 
-var { Server } = require("socket.io");
-
-var io = new Server(httpServer, {
-    cors: {
-        origin: process.env.DOMAIN
-    }
-});
-
-/**
- * Socket.IO server-side events
+ * Add SocketService class to Express application
+ * instance for future use in router.js
  */
-io.on('connection', (socket) => {
-    // Add the socket to a room called the
-    // same as the user's Facebook UID for
-    // future use in router.js
-    socket.on('set uid', (uid) => {
-        socket.join(uid);
-    });
-});
+var SocketService = require('./socket');
+app.set('socketService', new SocketService(httpServer));
 
-module.exports = { httpServer, io };
+module.exports = { httpServer };
 
 
 

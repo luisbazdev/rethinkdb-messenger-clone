@@ -1,6 +1,6 @@
+var rethinkdb = require('rethinkdb');
 var express = require('express');
 
-var { io } = require('./server');
 var db = require('./db');
 
 module.exports = router = express.Router();
@@ -14,21 +14,20 @@ db.then((conn) => {
     connection = conn;
 
     /**
-     * Query a few messages and listen
-     * for new records in the database and
+     * Listen for new records in the database and
      * notify users through a Socket.IO event
      */
-    router.get('/messages', (req, res) => {
+    router.post('/changes', (req, res) => {
         // Get both participants UID from request body
         var { from, target } = req.body;
         
         // Initialize a changefeed in the 'messages' table and query
         // record where either the current user's UID is the sender or
         // the target, and the opposite side is 'target'
-        db.table('messages').filter({...}).changes().run(connection, (err, cursor) => {
+        rethinkdb.table('messages').filter({...}).changes().run(connection, (err, cursor) => {
             cursor.each((err, row) => {
                 // Send new messages to both sender and target
-                io.to(from).to(target).emit('received message', row);
+                req.app.get('socketService').emit(from, target, 'received message', row);
         	});
         });
 
