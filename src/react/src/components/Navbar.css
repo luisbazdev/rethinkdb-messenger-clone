@@ -1,3 +1,25 @@
-.nav{
-    border-right: 1px solid #ececec;
+#profile{
+    width: 36px;
+    height: 36px;
+    object-fit: cover;
+    border: 1px solid #b4b4b4;
+    border-radius: 100%;
 }
+
+.nav{
+    margin: 0 10px;
+    border-right: 1px solid #ececec;
+    overflow-y: auto;
+}
+
+.header{
+    display: flex;
+    align-items: center;
+    column-gap: 100px;
+}
+
+.chats{
+    display: flex;
+    overflow-y: auto;
+}
+

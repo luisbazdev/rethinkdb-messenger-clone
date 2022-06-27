@@ -6,24 +6,22 @@ import Sidebar from './Sidebar';
 
 import './Main.css';
 
-import { io } from "socket.io-client";
-
-import axios from "axios";
+import { AuthContext } from "../contexts/AuthContext";
+import { socket } from '../ws';
 
 export default function Main(){
-
-    var socket;
+    
+    var { session } = React.useContext(AuthContext)
 
     useEffect(() => {
-        socket = io(process.env.DOMAIN);
-        // socket.emit('set uid', session.uid);
+        socket.emit('set uid', session.user_metadata.sub);
     }, [])
 
     return (
         <div className='main'>
-            <Navbar/>
-            <Chat/>
-            <Sidebar/>
+            <Navbar session={session}/>
+            <Chat session={session}/>
+            <Sidebar session={session}/>
         </div>
     )
 }

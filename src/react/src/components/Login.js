@@ -1,11 +1,13 @@
 import React from 'react';
 
+import { signInWithFacebook } from '../supabase';
+
 export default function Login(){
 
     return (
         <div>
             <h1>Login page</h1>
-            <button>Login with Google</button>
+            <button onClick={signInWithFacebook}>Login with Google</button>
         </div>
     )
 }
