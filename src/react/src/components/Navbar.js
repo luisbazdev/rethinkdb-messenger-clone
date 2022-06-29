@@ -6,6 +6,9 @@ import { supabase } from '../supabase';
 
 export default function Navbar({session}){
 
+    // Don't forget to query current 'profiles' 
+    // table before subscribing to it...
+
     const handleInserts = (payload) => {
         // ...
     }
