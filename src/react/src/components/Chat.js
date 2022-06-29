@@ -16,16 +16,16 @@ export default function Chat({session}){
         })
     }, [])
 
-    function sendMessage(){
-        axios.post(`${process.env.REACT_APP_DOMAIN}/api/messages`, {
-            from: session.user_metadata.sub,
-            // target: ...,
-            // message
-        })
-        .then(() => {
-            // ...
-        })
-    }
+    // function sendMessage(){
+    //     axios.post(`${process.env.REACT_APP_DOMAIN}/api/messages`, {
+    //         from: session.user_metadata.sub,
+    //         // target: ...,
+    //         // message
+    //     })
+    //     .then(() => {
+    //         // ...
+    //     })
+    // }
 
     return (
         <div className='chat'>
