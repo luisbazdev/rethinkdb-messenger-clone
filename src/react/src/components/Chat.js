@@ -18,6 +18,7 @@ export default function Chat({session}){
 
     const { currentChat } = React.useContext(ChatContext)
 
+    // The current open chat
     var { userID } = useParams();
 
     function sendMessage(){
@@ -38,15 +39,13 @@ export default function Chat({session}){
     useEffect(() => {
         socket.on('received message', (_message) => {
             /**
-             * This doesn't work properly, refactor it so
-             * the message gets inserted into the 'messages'
-             * state in the following cases:
+             * 'messages' state gets updated in the following cases:
              * 
              * 1. The user is the sender
              * 2. The user is the receiver and they're on the
              * same chat as the sender
              */
-            if(_message.new_val.from == userID || _message.new_val.from == session.user_metadata.sub)
+            if(_message.new_val.from == session.user_metadata.sub || (_message.new_val.target == session.user_metadata.sub && _message.new_val.target == userID))
                 setMessages((_messages) => [..._messages, _message.new_val]);
         })        
 
