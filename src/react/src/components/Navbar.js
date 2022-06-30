@@ -16,32 +16,34 @@ export default function Navbar({session}){
 
     var [inboxes, setInboxes] = useState([])
 
-    const handleInserts = (payload) => {
-        // ...
+    function handler(payload){
+        const _inbox = payload.new;
+        setInboxes((_inboxes) => [..._inboxes, _inbox]);
     }
     
-    // Rename 'init' and 'init2' functions
-    // and add logic for 'handleInserts'
-    async function init(){
-        var { data: todos, error } = supabase
+    function start(){
+        // Query records in the 'profiles' table
+        queryProfiles();
+
+        // Listen for INSERTS in the 'profiles' table
+        supabase
         .from('profiles')
-        .on('INSERT', handleInserts)
-        .subscribe()
+        .on('INSERT', handler)
+        .subscribe();
     }
 
-    async function init2(){
+    async function queryProfiles(){
         const { data: _inboxes, error } = await supabase
         .from('profiles')
         .select('*')
+        .not('user_id', 'eq', session.user_metadata.sub)
 
-        setInboxes(_inboxes)
+        setInboxes(_inboxes);
     }   
 
     useEffect(() => {
-        init()
-        init2()
+        start()
     }, [])
-
 
     return (
         <div className='nav'>
