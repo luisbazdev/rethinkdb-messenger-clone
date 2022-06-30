@@ -1,4 +1,4 @@
-#profile{
+#navbar_profile{
     width: 36px;
     height: 36px;
     object-fit: cover;
@@ -20,6 +20,7 @@
 
 .chats{
     display: flex;
+    flex-direction: column;
     overflow-y: auto;
 }
 

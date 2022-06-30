@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 var socketIO = require('socket.io');
 
 class SocketService {

@@ -2,35 +2,70 @@ import React, { useEffect, useState} from 'react';
 
 import './Chat.css';
 
-import { logOut } from '../supabase';
+import { socket } from '../ws';
 
 import axios from "axios";
 
+import { useParams } from 'react-router-dom';
+
+import Message from './Message';
+
+import { ChatContext } from "../contexts/ChatContext";
+
 export default function Chat({session}){
-    // const [message, setMessage] = useState('')
+    const [message, setMessage] = useState('');
+    const [messages, setMessages] = useState([]);
+
+    const { currentChat } = React.useContext(ChatContext)
+
+    var { userID } = useParams();
+
+    function sendMessage(){
+        axios.post(`${process.env.REACT_APP_DOMAIN}/api/messages`, {
+            from: session.user_metadata.sub,
+            target: userID,
+            message
+        }).then(() => setMessage(''));
+    }
 
     useEffect(() => {
-        axios.post(`${process.env.REACT_APP_DOMAIN}/api/changes`, {
-            from: session.user_metadata.sub,
-            // target: ...,
-        })
-    }, [])
+        if(userID){
+            axios.get(`${process.env.REACT_APP_DOMAIN}/api/messages?from=${session.user_metadata.sub}&target=${userID}`)
+            .then((_messages) => setMessages(_messages.data));
+        }
+    }, [userID])
 
-    // function sendMessage(){
-    //     axios.post(`${process.env.REACT_APP_DOMAIN}/api/messages`, {
-    //         from: session.user_metadata.sub,
-    //         // target: ...,
-    //         // message
-    //     })
-    //     .then(() => {
-    //         // ...
-    //     })
-    // }
+    useEffect(() => {
+        socket.on('received message', (_message) => {
+            /**
+             * This doesn't work properly, refactor it so
+             * the message gets inserted into the 'messages'
+             * state in the following cases:
+             * 
+             * 1. The user is the sender
+             * 2. The user is the receiver and they're on the
+             * same chat as the sender
+             */
+            if(_message.new_val.from == userID || _message.new_val.from == session.user_metadata.sub)
+                setMessages((_messages) => [..._messages, _message.new_val]);
+        })        
+
+        return () => {
+            socket.off();
+        }
+    }, [])
 
     return (
         <div className='chat'>
-            <h1>Chat</h1>
-            <button onClick={logOut}>log out</button>
+            <div className='chat_header'>
+                <img id='chat_profile' src={currentChat.avatar_url}/>
+                <p>{currentChat.user_name}</p>
+            </div>
+            <div id='messages'>
+                {messages.map((msg) => <Message message={msg}/>)}
+            </div>
+            <input type='text' value={message} onChange={(e) => setMessage(e.target.value)}/>
+            <button onClick={sendMessage}>Send</button>
         </div>
     )
 }
