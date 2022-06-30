@@ -19,7 +19,7 @@ export default function Chat({session}){
     const { currentChat } = React.useContext(ChatContext)
 
     // The current open chat
-    var { userID } = useParams();
+    let { userID } = useParams();
 
     function sendMessage(){
         axios.post(`${process.env.REACT_APP_DOMAIN}/api/messages`, {
@@ -45,14 +45,14 @@ export default function Chat({session}){
              * 2. The user is the receiver and they're on the
              * same chat as the sender
              */
-            if(_message.new_val.from == session.user_metadata.sub || (_message.new_val.target == session.user_metadata.sub && _message.new_val.target == userID))
+            if(_message.new_val.from == session.user_metadata.sub || _message.new_val.from == userID)
                 setMessages((_messages) => [..._messages, _message.new_val]);
         })        
 
         return () => {
             socket.off();
         }
-    }, [])
+    }, [userID])
 
     return (
         <div className='chat'>
@@ -61,7 +61,7 @@ export default function Chat({session}){
                 <p>{currentChat.user_name}</p>
             </div>
             <div id='messages'>
-                {messages.map((msg) => <Message message={msg}/>)}
+                {messages.map((msg) => <Message key={msg.id} message={msg}/>)}
             </div>
             <input type='text' value={message} onChange={(e) => setMessage(e.target.value)}/>
             <button onClick={sendMessage}>Send</button>
