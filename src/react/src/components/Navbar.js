@@ -12,7 +12,7 @@ import { ChatContext } from "../contexts/ChatContext";
 
 export default function Navbar({session}){
 
-    const { setCurrentChat } = React.useContext(ChatContext)
+    const { currentChat, setCurrentChat } = React.useContext(ChatContext)
 
     var [inboxes, setInboxes] = useState([])
 
@@ -52,7 +52,12 @@ export default function Navbar({session}){
                 <strong>Chats</strong>
             </div>
             <div className='chats'>
-                {inboxes.map((inbox) => <Link onClick={() => setCurrentChat(inbox)} key={inbox.user_id} to={`./${inbox.user_id}`}> <Inbox inbox={inbox}/> </Link>)}
+                {inboxes.map((inbox) => 
+                <Link onClick={() => setCurrentChat(inbox)} 
+                key={inbox.user_id} 
+                to={`./${inbox.user_id}`}> 
+                    <Inbox inbox={inbox} selected={inbox === currentChat}/> 
+                </Link>)}
             </div>
         </div>
     )

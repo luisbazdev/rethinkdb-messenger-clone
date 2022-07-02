@@ -1,7 +1,6 @@
-.main{
-    overflow-y: auto;
-    width: 100%;
+.main{    
     height: 100%;
     display: grid;
-    grid-template-columns: 350px 1fr 320px;
+    grid-template-columns: 350px 1fr;
+    /* grid-template-columns: 350px 1fr 320px; */
 }

@@ -1,9 +1,11 @@
 import React from "react"
 
-export default function Message({message}){
+import './Message.css'
+
+export default function Message({message, own}){
     return (
-        <div>
-            <p>{message.message}</p>
+        <div className={`message ${own ? 'own' : ''}`}>
+            <p className='message_content'>{message.message}</p>
         </div>
     )
 }

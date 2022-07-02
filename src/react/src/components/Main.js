@@ -28,7 +28,7 @@ export default function Main(){
         <div className='main'>
             <Navbar session={session}/>
             {currentChat != null && <Chat session={session}/> }
-            {currentChat != null && <Sidebar session={session}/> }
+            {/* {currentChat != null && <Sidebar session={session}/> } */}
         </div>
     )
 }

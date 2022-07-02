@@ -1,3 +1,8 @@
+#selected{
+    border-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
 #inbox_profile{
     width: 48px;
     height: 48px;
@@ -7,5 +12,15 @@
 }
 
 .inbox{
+    padding: 12px;
     display: flex;
+    align-items: flex-start;
+    column-gap: 10px;
 }
+
+.details{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+

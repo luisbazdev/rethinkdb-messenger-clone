@@ -7,9 +7,13 @@
 }
 
 .nav{
-    margin: 0 10px;
-    border-right: 1px solid #ececec;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    row-gap: 15px;
+    background-color: #fff;
+    border-right: 1px solid #e7e7e7;
+    padding: 10px 7px;
 }
 
 .header{
@@ -21,6 +25,7 @@
 .chats{
     display: flex;
     flex-direction: column;
+    row-gap: 15px;
     overflow-y: auto;
 }
 

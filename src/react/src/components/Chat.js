@@ -16,6 +16,8 @@ export default function Chat({session}){
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
 
+    const [status, setStatus] = useState(null);
+
     const { currentChat } = React.useContext(ChatContext)
 
     // The current open chat
@@ -58,13 +60,18 @@ export default function Chat({session}){
         <div className='chat'>
             <div className='chat_header'>
                 <img id='chat_profile' src={currentChat.avatar_url}/>
-                <p>{currentChat.user_name}</p>
+                <div className='chat_user_info'>
+                    <p>{currentChat.user_name}</p>
+                    <p id='chat_status'>{status}</p>
+                </div>
             </div>
-            <div id='messages'>
-                {messages.map((msg) => <Message key={msg.id} message={msg}/>)}
+            <div className='chat_messages'>
+                {messages.map((msg) => <Message key={msg.id} message={msg} own={msg.from == session.user_metadata.sub}/>)}
             </div>
-            <input type='text' value={message} onChange={(e) => setMessage(e.target.value)}/>
-            <button onClick={sendMessage}>Send</button>
+            <div className='chat_submit'>
+                <input type='text' value={message} onChange={(e) => setMessage(e.target.value)}/>
+                <button onClick={sendMessage}>Send</button>
+            </div>
         </div>
     )
 }
