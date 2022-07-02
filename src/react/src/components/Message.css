@@ -9,6 +9,12 @@
     background-color:#e9e9e9;
 }
 
+.message_file{
+    border-radius: 20px;
+    max-width: 500px;
+    max-height: 500px;
+}
+
 .own{
     justify-content: flex-end;
 }

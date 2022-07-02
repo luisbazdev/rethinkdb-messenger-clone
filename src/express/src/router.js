@@ -75,14 +75,23 @@ db.then((conn) => {
      * Insert a new record in the 'messages' table
      */
     router.post('/messages', (req, res) => {
-        // Get both participants UID and the message itself from request body
-        var { from, target, message } = req.body;
+        // Get both participants UID and the message itself from request body,
+        // as well as file information (in case a file was sent by the user)
+        var { from, target, message, file_path, file_ext } = req.body;
     
-        r.table('messages').insert({
-            from,
-            target,
-            message,
-        }).run(connection);
+        if(!message)
+            r.table('messages').insert({
+                from,
+                target,
+                file_path,
+                file_ext
+            }).run(connection);
+        else
+            r.table('messages').insert({
+                from,
+                target,
+                message,
+            }).run(connection);
     
         res.status(201).end();
     });
