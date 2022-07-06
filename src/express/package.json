@@ -1,5 +1,5 @@
 {
-  "name": "api",
+  "name": "RethinkDB Messenger Clone RESTful API",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,7 +7,7 @@
     "start": "node ./src/index"
   },
   "keywords": [],
-  "author": "",
+  "author": "Luis Barraza (luisbazdev)",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",

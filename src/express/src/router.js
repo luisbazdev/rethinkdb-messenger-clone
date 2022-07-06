@@ -63,7 +63,7 @@ db.then((conn) => {
 
         var filter = ((r.row('from').eq(from).and(r.row('target').eq(target))).or((r.row('from').eq(target).and(r.row('target').eq(from)))));
 
-        r.table('messages').filter(filter).slice(offset || 0).limit(30).run(connection, (err, cursor) => {
+        r.table('messages').filter(filter).slice(offset || 0).limit(30).orderBy('createdAt').run(connection, (err, cursor) => {
             cursor.toArray((err, results) => {
                 if (err) throw err;
                 res.status(200).json(results);
@@ -84,28 +84,18 @@ db.then((conn) => {
                 from,
                 target,
                 file_path,
-                file_ext
+                file_ext,
+                createdAt: new Date()
             }).run(connection);
         else
             r.table('messages').insert({
                 from,
                 target,
                 message,
+                createdAt: new Date()
             }).run(connection);
     
         res.status(201).end();
-    });
-    
-    /**
-     * Update a record in the 'messages' table
-     */
-    router.patch('/messages', (req, res) => {
-        // Get the ID of the message to update and the new content from request body
-        var { id, message } = req.body;
-    
-        r.table('messages').get(id).update({message}).run(connection);
-
-        res.status(200).end();
     });
     
     /**
