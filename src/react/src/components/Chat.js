@@ -27,7 +27,8 @@ export default function Chat({session}){
 
     const { currentChat } = React.useContext(ChatContext);
 
-    const [file, setFile] = useState(null);
+    const [files, setFiles] = useState([]);
+    const [previews, setPreviews] = useState([]);
 
     const filePicker = useRef(null);
 
@@ -35,13 +36,16 @@ export default function Chat({session}){
     let { userID } = useParams();
 
     function addFile(e){    
-        console.log(e.target.files[0])
 
         const reader = new FileReader();
 
         reader.readAsDataURL(e.target.files[0]);
 
-        setFile(e.target.files[0]);
+        setFiles((_files) => [..._files, e.target.files[0]]);
+
+        reader.onload = (e) => {
+            setPreviews((_previews) => [..._previews, e.target.result]);
+        }
     }
 
     async function sendMessage(){
@@ -54,29 +58,33 @@ export default function Chat({session}){
             }).then(() => setMessage(''));
         }
 
-        /**
-        * The file doesn't change after being
-        * sent, also let users to add multiple
-        * files and send them at the same time
-        */
-        if(file != null){
-            const random_id = uniqid();
+        if(files.length > 0){
+            files.forEach( async (_file) => {
+                try {
+                    const random_id = uniqid();
 
-            const fileExt = file.name.substring(file.name.lastIndexOf(".") + 1);
-            const contentType = file.type;
+                    const fileExt = _file.name.substring(_file.name.lastIndexOf(".") + 1);
+                    const contentType = _file.type;
+        
+                    const { data, error } = await supabase.storage
+                    .from('files')
+                    .upload(`${random_id}.${fileExt}`, _file, {
+                        contentType
+                    })
+        
+                    axios.post(`${process.env.REACT_APP_DOMAIN}/api/messages`, {
+                        from: session.user_metadata.sub,
+                        target: userID,
+                        file_path: `${random_id}.${fileExt}`,
+                        file_ext: fileExt
+                    })
+                } catch (error) {
+                    console.log(error)
+                }
+            });
 
-            const { data, error } = await supabase.storage
-            .from('files')
-            .upload(`${random_id}.${fileExt}`, file, {
-                contentType
-            })
-
-            axios.post(`${process.env.REACT_APP_DOMAIN}/api/messages`, {
-                from: session.user_metadata.sub,
-                target: userID,
-                file_path: `${random_id}.${fileExt}`,
-                file_ext: fileExt
-            })
+            setFiles([]);
+            setPreviews([]);
         }
     }
 
@@ -102,6 +110,9 @@ export default function Chat({session}){
 
         return () => {
             socket.off();
+
+            setFiles([]);
+            setPreviews([]);
         }
     }, [userID])
 
@@ -118,9 +129,20 @@ export default function Chat({session}){
                 {messages.map((msg) => <Message key={msg.id} message={msg} own={msg.from == session.user_metadata.sub}/>)}
             </div>
             <div className='chat_submit'>
-                <input type='file' ref={filePicker} onChange={addFile} hidden/>
+                <input type='file' ref={filePicker} 
+                onChange={addFile} 
+                onClick={(e) => e.target.value = null}
+                hidden/>
                 <BsImage className='icon' onClick={() => filePicker.current.click()}/>
-                <input type='text' placeholder='Aa' value={message} onChange={(e) => setMessage(e.target.value)}/>
+                    <div className='chat_container'>
+                        <div className='chat_files'>
+                            { previews.length > 0 && previews.map((_pre) => {
+                                return <img className='selected_file' src={_pre}/>
+                            })}
+                        </div>
+
+                        <input type='text' placeholder='Aa' value={message} onChange={(e) => setMessage(e.target.value)}/>
+                    </div>
                 <MdSend className='icon' onClick={sendMessage}/>
             </div>
         </div>
