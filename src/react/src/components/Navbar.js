@@ -56,7 +56,7 @@ export default function Navbar({session}){
                 <Link onClick={() => setCurrentChat(inbox)} 
                 key={inbox.user_id} 
                 to={`./${inbox.user_id}`}> 
-                    <Inbox inbox={inbox} selected={inbox === currentChat}/> 
+                    <Inbox session={session} inbox={inbox} selected={inbox === currentChat}/> 
                 </Link>)}
             </div>
         </div>

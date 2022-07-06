@@ -53,22 +53,42 @@ db.then((conn) => {
     });
 
     /**
-     * Get the last 30 records from the 'messages' table 
+     * Get the last N records from the 'messages' table 
      * where the user's id is  either in the 'from' field 
      * or the 'target' field, and the opposite field is the 
      * target's user id.
      */
     router.get('/messages', (req, res) => {
-        var { from, target, offset } = req.query;
+        var { from, target, offset, limit, orderBy } = req.query;
 
         var filter = ((r.row('from').eq(from).and(r.row('target').eq(target))).or((r.row('from').eq(target).and(r.row('target').eq(from)))));
 
-        r.table('messages').filter(filter).slice(offset || 0).limit(30).orderBy('createdAt').run(connection, (err, cursor) => {
-            cursor.toArray((err, results) => {
-                if (err) throw err;
-                res.status(200).json(results);
+        // Make this cleaner
+        if(orderBy == 'asc')
+            r.table('messages')
+            .filter(filter)
+            .slice(Number(offset) || 0)
+            .orderBy('createdAt')
+            .limit(Number(limit) || 30)
+            .run(connection, (err, cursor) => {
+                cursor.toArray((err, results) => {
+                    if (err) throw err;
+                    res.status(200).json(results);
+                });
             });
-        });
+        else
+            r.table('messages')
+            .filter(filter)
+            .slice(Number(offset) || 0)
+            .orderBy(r.desc('createdAt'))
+            .limit(Number(limit) || 30)
+            .run(connection, (err, cursor) => {
+                cursor.toArray((err, results) => {
+                    if (err) throw err;
+                    res.status(200).json(results);
+                });
+            });
+
     });
 
     /**

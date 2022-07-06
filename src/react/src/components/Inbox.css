@@ -18,9 +18,15 @@
     column-gap: 10px;
 }
 
+.inbox_last_message{
+    font-size: 14px;
+    color: #8a8a8a;
+}
+
 .details{
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    row-gap: 3px;
 }
 

@@ -99,7 +99,7 @@ export default function Chat({session}){
 
     useEffect(() => {
         if(userID){
-            axios.get(`${process.env.REACT_APP_DOMAIN}/api/messages?from=${session.user_metadata.sub}&target=${userID}`)
+            axios.get(`${process.env.REACT_APP_DOMAIN}/api/messages?from=${session.user_metadata.sub}&target=${userID}&orderBy=asc`)
             .then((_messages) => setMessages(_messages.data));
         }
     }, [userID])
@@ -113,8 +113,10 @@ export default function Chat({session}){
              * 2. The user is the receiver and they're on the
              * same chat as the sender
              */
-            if(_message.new_val.from == session.user_metadata.sub || _message.new_val.from == userID)
+            if(_message.new_val.from == session.user_metadata.sub || _message.new_val.from == userID){
                 setMessages((_messages) => [..._messages, _message.new_val]);
+                setWriting(false);
+            }
         })        
 
         socket.on('user writing', (_from) => {
