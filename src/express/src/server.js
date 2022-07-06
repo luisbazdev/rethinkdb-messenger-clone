@@ -16,8 +16,3 @@ var SocketService = require('./socket');
 app.set('socketService', new SocketService(httpServer));
 
 module.exports = { httpServer };
-
-
-
-
-

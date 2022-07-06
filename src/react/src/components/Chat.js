@@ -24,6 +24,7 @@ export default function Chat({session}){
     const [messages, setMessages] = useState([]);
 
     const [status, setStatus] = useState(null);
+    const [writing, setWriting] = useState(false);
 
     const { currentChat } = React.useContext(ChatContext);
 
@@ -46,6 +47,14 @@ export default function Chat({session}){
         reader.onload = (e) => {
             setPreviews((_previews) => [..._previews, e.target.result]);
         }
+    }
+
+    function onMessageChange(e){
+        if(e.target.value != '')
+            // Sent 'user writing' event to target
+            socket.emit('user writing', session.user_metadata.sub, userID);
+
+        setMessage(e.target.value);
     }
 
     async function sendMessage(){
@@ -108,6 +117,16 @@ export default function Chat({session}){
                 setMessages((_messages) => [..._messages, _message.new_val]);
         })        
 
+        socket.on('user writing', (_from) => {
+            if(userID == _from){
+                setWriting(true);
+                
+                setTimeout(() => {
+                    setWriting(false);
+                }, 5000)
+            }
+        })
+
         return () => {
             socket.off();
 
@@ -127,6 +146,7 @@ export default function Chat({session}){
             </div>
             <div className='chat_messages'>
                 {messages.map((msg) => <Message key={msg.id} message={msg} own={msg.from == session.user_metadata.sub}/>)}
+                {writing && <Message key={'writing'} message={{message: '...'}} own={false}/>}
             </div>
             <div className='chat_submit'>
                 <input type='file' ref={filePicker} 
@@ -141,7 +161,7 @@ export default function Chat({session}){
                             })}
                         </div>
 
-                        <input type='text' placeholder='Aa' value={message} onChange={(e) => setMessage(e.target.value)}/>
+                        <input type='text' placeholder='Aa' value={message} onChange={onMessageChange}/>
                     </div>
                 <MdSend className='icon' onClick={sendMessage}/>
             </div>

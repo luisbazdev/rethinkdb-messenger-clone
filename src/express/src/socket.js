@@ -17,6 +17,10 @@ class SocketService {
          socket.on('set uid', (uid) => {
             socket.join(uid);
          });
+
+         socket.on('user writing', (from, target) => {
+            socket.to(target).emit('user writing', from);
+         });
       });
    };
 
