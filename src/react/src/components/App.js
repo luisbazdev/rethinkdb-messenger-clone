@@ -1,12 +1,12 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import Login from "./components/Login";
-import Main from "./components/Main";
+import Login from "./Login";
+import Main from "./Main";
 
-import './App.css';
+import './styles/App.css';
 
-import { AuthContext } from "./contexts/AuthContext";
+import { AuthContext } from "../contexts/AuthContext";
 
 export default function App(){
 

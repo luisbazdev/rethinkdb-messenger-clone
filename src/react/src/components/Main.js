@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react';
 
-import Navbar from './Navbar';
-import Chat from './Chat';
-import Sidebar from './Sidebar';
+import Navbar from './nav/Navbar';
+import Chat from './chat/Chat';
 
-import './Main.css';
+import './styles/Main.css';
 
 import { ChatContext } from "../contexts/ChatContext";
 import { AuthContext } from "../contexts/AuthContext";
@@ -26,9 +25,8 @@ export default function Main(){
 
     return (
         <div className='main'>
-            <Navbar session={session}/>
-            {currentChat != null && <Chat session={session}/> }
-            {/* {currentChat != null && <Sidebar session={session}/> } */}
+            <Navbar/>
+            {currentChat != null && <Chat/> }
         </div>
     )
 }

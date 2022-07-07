@@ -1,43 +1,24 @@
 import React, { useEffect, useState } from "react";
 
-import './Inbox.css';
+import '../styles/Inbox.css';
 
-import { socket } from '../ws';
+import { socket } from '../../ws';
 
 import { useParams } from 'react-router-dom';
 
 import axios from "axios";
 
+import { formatMessage } from "../../libs/format";
+
 export default function Inbox({session, inbox, selected}){
     const [lastMessage, setLastMessage] = useState('');
 
-    let { userID } = useParams();
+    const { userID } = useParams();
 
     function addLastMessage(message){
-        let imgExt = ['jpg', 'png', 'jpeg', 'gif'];
-        let videoExt = ['mp4', 'ogg', 'webm', 'wmv', 'avi', 'mpg', 'mpeg'];
-
         if(message){
-            if(message.message){
-                if(message.from == session.user_metadata.sub)
-                    setLastMessage(`You: ${message.message}`);
-                else
-                    setLastMessage(message.data[0].message);
-            }
-            else{
-                if(imgExt.findIndex(_ext => _ext == message.file_ext) != -1){
-                    if(message.from == session.user_metadata.sub)
-                        setLastMessage('You sent a photo.');
-                    else
-                        setLastMessage(`${inbox.user_name} sent a photo.`);
-                }
-                if(videoExt.findIndex(_ext => _ext == message.file_ext) != -1){
-                    if(message.from == session.user_metadata.sub)
-                        setLastMessage('You sent a video.');
-                    else
-                        setLastMessage(`${inbox.user_name} sent a video.`);
-                }
-            }
+            const _formattedMessage = formatMessage(session.user_metadata.uid, message, inbox.user_name);
+            setLastMessage(_formattedMessage);
         }
     }
 

@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from 'react';
 
-import './Navbar.css';
+import '../styles/Navbar.css';
 
-import { supabase } from '../supabase';
+import { supabase } from '../../supabase';
 
 import Inbox from './Inbox';
 
 import { Link }  from 'react-router-dom'
 
-import { ChatContext } from "../contexts/ChatContext";
+import { AuthContext } from "../../contexts/AuthContext";
+import { ChatContext } from "../../contexts/ChatContext";
 
-export default function Navbar({session}){
+export default function Navbar(){
 
+    const { session } = React.useContext(AuthContext)
     const { currentChat, setCurrentChat } = React.useContext(ChatContext)
 
-    var [inboxes, setInboxes] = useState([])
+    const [inboxes, setInboxes] = useState([])
 
     function handler(payload){
         const _inbox = payload.new;
