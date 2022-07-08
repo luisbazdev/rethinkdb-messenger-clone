@@ -1,6 +1,8 @@
-.message{
+.message_box{
     width: 100%;
     display: flex;
+    /* align-items: center; */
+    position: relative;
 }
 
 .message_content{
@@ -10,6 +12,13 @@
     padding: 10px;
     border-radius: 15px;
     background-color:#e9e9e9;
+}
+
+.message_user_avatar{
+    padding: 0 10px;
+    border-radius: 100%;
+    width: 28px;
+    height: 28px;
 }
 
 .message_file{
@@ -25,4 +34,29 @@
 .own .message_content{
     color: #fff;
     background-color: rgb(23, 122, 252);
+}
+
+.message_date{
+    z-index: 100;
+    display: flex;
+    position: absolute;
+    left: -30px;
+    font-size: 15px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    color: #ffffff;
+    width: auto;
+    height: auto;
+    align-items: center;
+    justify-content: center;
+    background-color: #333333;
+}
+
+.message_content:hover .message_date{
+    display: flex;
+}
+
+.message{
+    display: flex;
+    align-items: flex-end;
 }

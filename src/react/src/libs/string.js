@@ -29,3 +29,11 @@ export function formatMessage(id, _msg, _user){
 
     return message;
 }
+
+export function formatDate(date){
+    let _date = new Date(date);
+
+    let formattedDate = `${_date.toLocaleDateString()} · ${_date.toLocaleTimeString()}`;
+
+    return formattedDate;
+}

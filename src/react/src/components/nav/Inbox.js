@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom';
 
 import axios from "axios";
 
-import { formatMessage } from "../../libs/format";
+import { formatMessage } from "../../libs/string";
 
 export default function Inbox({session, inbox, selected}){
     const [lastMessage, setLastMessage] = useState('');

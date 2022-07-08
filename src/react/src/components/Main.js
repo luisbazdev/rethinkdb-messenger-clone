@@ -5,8 +5,8 @@ import Chat from './chat/Chat';
 
 import './styles/Main.css';
 
-import { ChatContext } from "../contexts/ChatContext";
 import { AuthContext } from "../contexts/AuthContext";
+import { ChatContext } from "../contexts/ChatContext";
 
 import { socket } from '../ws';
 
