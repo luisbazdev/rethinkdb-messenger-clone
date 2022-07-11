@@ -31,14 +31,12 @@ export default function Messages(){
             }
         })        
 
-        socket.on('user writing', (_from) => {
-            if(userID == _from){
-                setWriting(true);
-                
-                setTimeout(() => {
-                    setWriting(false);
-                }, 5000)
-            }
+        socket.on('start writing', (_from) => {
+            userID == _from ? setWriting(true) : false;
+        })
+
+        socket.on('stop writing', (_from) => {
+            userID == _from ? setWriting(false) : false;
         })
 
         if(userID){

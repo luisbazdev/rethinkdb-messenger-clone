@@ -18,7 +18,7 @@ export default function App(){
                 <Route path='/' element={session == null ? <Login/> : <Navigate to='/t'/>} />
                     <Route path='t' element={session != null ? <Main/> : <Navigate to='/'/>} >
                       <Route path=':userID' element={<Main/>} />
-                </Route>
+                    </Route>
             </Routes>
         </BrowserRouter>
     )

@@ -47,7 +47,7 @@ export default function Submit(){
                 try {
                     const random_id = uniqid();
 
-                    const fileExt = extractExtension(_file.name)
+                    const fileExt = extractExtension(_file.name);
                     const contentType = _file.type;
         
                     const { data, error } = await supabase.storage
@@ -63,19 +63,23 @@ export default function Submit(){
                         file_ext: fileExt
                     })
                 } catch (error) {
-                    console.log(error)
+                    console.log(error);
                 }
             });
 
             setFiles([]);
             setPreviews([]);
         }
+
+        socket.emit('stop writing', session.user_metadata.sub, userID);
     }
 
     function onMessageChange(e){
-        if(e.target.value != '')
-            // Sent 'user writing' event to target
-            socket.emit('user writing', session.user_metadata.sub, userID);
+        e.target.value != ''
+        // Sent 'start writing' event to target
+        ? socket.emit('start writing', session.user_metadata.sub, userID)
+        // Sent 'stop writing' event to target
+        : socket.emit('stop writing', session.user_metadata.sub, userID)
 
         setMessage(e.target.value);
     }

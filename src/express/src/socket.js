@@ -18,8 +18,12 @@ class SocketService {
             socket.join(uid);
          });
 
-         socket.on('user writing', (from, target) => {
-            socket.to(target).emit('user writing', from);
+         socket.on('start writing', (from, target) => {
+            socket.to(target).emit('start writing', from);
+         });
+
+         socket.on('stop writing', (from, target) => {
+            socket.to(target).emit('stop writing', from);
          });
       });
    };
