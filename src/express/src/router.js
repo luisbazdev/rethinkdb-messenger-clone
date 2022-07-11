@@ -21,7 +21,7 @@ var cors = require('cors');
 
 app.use(cors({
     origin: process.env.DOMAIN,
-    methods: ['GET', 'POST', 'PATCH', 'DELETE']
+    methods: ['GET', 'POST', 'DELETE']
 }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -76,6 +76,7 @@ db.then((conn) => {
                     res.status(200).json(results);
                 });
             });
+
         else
             r.table('messages')
             .filter(filter)
@@ -88,8 +89,18 @@ db.then((conn) => {
                     res.status(200).json(results);
                 });
             });
-
     });
+
+    /**
+     * Get a message with the provided ID from the 'messages' table
+     */
+    router.get('/messages/:messageId', (req, res) => {
+        var { messageId } = req.params
+
+        r.table('messages').get(messageId).run(connection, (err, result) => {
+            return res.json(result);
+        })
+    })
 
     /**
      * Insert a new record in the 'messages' table
@@ -107,6 +118,7 @@ db.then((conn) => {
                 file_ext,
                 createdAt: new Date()
             }).run(connection);
+            
         else
             r.table('messages').insert({
                 from,
@@ -121,11 +133,11 @@ db.then((conn) => {
     /**
      * Delete a record in the 'messages' table
      */
-    router.delete('/messages', (req, res) => {
+    router.delete('/messages/:messageId', (req, res) => {
         // Get the ID of the message to delete
-        var { id } = req.body;
+        var { messageId } = req.params
     
-        r.table('messages').get(id).delete().run(connection);
+        r.table('messages').get(messageId).delete().run(connection);
 
         res.status(200).end();
     });
