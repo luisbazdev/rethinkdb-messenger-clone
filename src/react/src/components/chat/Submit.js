@@ -34,7 +34,7 @@ export default function Submit(){
 
     async function sendMessage(){
         // Send the message and the file separately
-        if(message != ''){
+        if(message !== ''){
             axios.post(`${process.env.REACT_APP_DOMAIN}/api/messages`, {
                 from: session.user_metadata.sub,
                 target: userID,
@@ -50,7 +50,7 @@ export default function Submit(){
                     const fileExt = extractExtension(_file.name);
                     const contentType = _file.type;
         
-                    const { data, error } = await supabase.storage
+                    await supabase.storage
                     .from('files')
                     .upload(`${random_id}.${fileExt}`, _file, {
                         contentType
@@ -75,7 +75,7 @@ export default function Submit(){
     }
 
     function onMessageChange(e){
-        e.target.value != ''
+        e.target.value !== ''
         // Sent 'start writing' event to target
         ? socket.emit('start writing', session.user_metadata.sub, userID)
         // Sent 'stop writing' event to target

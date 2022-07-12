@@ -21,7 +21,7 @@ var cors = require('cors');
 
 app.use(cors({
     origin: process.env.DOMAIN,
-    methods: ['GET', 'POST', 'DELETE']
+    methods: ['GET', 'POST', 'PATCH']
 }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -45,10 +45,19 @@ db.then((conn) => {
      */
     r.table('messages').changes().run(connection, (err, cursor) => {
         cursor.each((err, row) => {
-            var { from, target } = row.new_val;
+            if(row.new_val.unsent === true){
+                var { from, target } = row.new_val;
 
-            // Send new messages to both sender and target
-            app.get('socketService').emit(from, target, 'received message', row);
+                row.new_val.unsentFor === 'everyone' 
+                ? app.get('socketService').emit(from, target, 'unsent message', row)
+                : app.get('socketService').emit(row.new_val.unsentFor, null, 'unsent message', row)
+            }
+            else{
+                var { from, target } = row.new_val;
+                
+                // Notify both sender and receiver of a new message
+                app.get('socketService').emit(from, target, 'received message', row);
+            }  
     	});
     });
 
@@ -61,12 +70,16 @@ db.then((conn) => {
     router.get('/messages', (req, res) => {
         var { from, target, offset, limit, orderBy } = req.query;
 
-        var filter = ((r.row('from').eq(from).and(r.row('target').eq(target))).or((r.row('from').eq(target).and(r.row('target').eq(from)))));
+        var filter = ( 
+            ((r.row('from').eq(from).and(r.row('target').eq(target)))
+            .or(r.row('from').eq(target).and(r.row('target').eq(from))))
+            .and(r.row('unsentFor').eq(from).not())
+        );
 
         // Make this cleaner
         if(orderBy == 'asc')
             r.table('messages')
-            .filter(filter)
+            .filter(filter, {default: true})
             .slice(Number(offset) || 0)
             .orderBy('createdAt')
             .limit(Number(limit) || 30)
@@ -79,7 +92,7 @@ db.then((conn) => {
 
         else
             r.table('messages')
-            .filter(filter)
+            .filter(filter, {default: true})
             .slice(Number(offset) || 0)
             .orderBy(r.desc('createdAt'))
             .limit(Number(limit) || 30)
@@ -98,7 +111,7 @@ db.then((conn) => {
         var { messageId } = req.params
 
         r.table('messages').get(messageId).run(connection, (err, result) => {
-            return res.json(result);
+            return res.status(200).json(result);
         })
     })
 
@@ -131,13 +144,19 @@ db.then((conn) => {
     });
     
     /**
-     * Delete a record in the 'messages' table
+     * Update a record in the 'messages' table
      */
-    router.delete('/messages/:messageId', (req, res) => {
+    router.patch('/messages/:messageId', (req, res) => {
+        var { unsentFor } = req.query;
+
         // Get the ID of the message to delete
-        var { messageId } = req.params
-    
-        r.table('messages').get(messageId).delete().run(connection);
+        var { messageId } = req.params;
+
+        if(unsentFor === 'everyone')
+            r.table('messages').get(messageId).update({unsent: true, unsentFor, unsentAt: new Date(), message: null, file_path: null, file_ext: null}).run(connection);
+            
+        else
+            r.table('messages').get(messageId).update({unsent: true, unsentFor, unsentAt: new Date()}).run(connection);
 
         res.status(200).end();
     });

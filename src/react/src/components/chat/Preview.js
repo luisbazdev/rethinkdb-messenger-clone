@@ -10,8 +10,8 @@ export default function Preview({file, preview}){
 
     return (
         <div>
-            {extensions.image.find(_ext => _ext == fileExt) && <img className='selected_file' src={preview}/>}
-            {extensions.video.find(_ext => _ext == fileExt) && <video className='selected_file' src={preview}/>}
+            {extensions.image.find(_ext => _ext === fileExt) && <img className='selected_file' alt='Preview' src={preview}/>}
+            {extensions.video.find(_ext => _ext === fileExt) && <video className='selected_file' src={preview}/>}
         </div>
     )
 }

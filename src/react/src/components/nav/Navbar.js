@@ -6,7 +6,7 @@ import { supabase } from '../../supabase';
 
 import Inbox from './Inbox';
 
-import { Link }  from 'react-router-dom'
+import { Link, Navigate }  from 'react-router-dom'
 
 import { AuthContext } from "../../contexts/AuthContext";
 import { ChatContext } from "../../contexts/ChatContext";
@@ -35,7 +35,7 @@ export default function Navbar(){
     }
 
     async function queryProfiles(){
-        const { data: _inboxes, error } = await supabase
+        const { data: _inboxes} = await supabase
         .from('profiles')
         .select('*')
         .not('user_id', 'eq', session.user_metadata.sub)
@@ -50,7 +50,7 @@ export default function Navbar(){
     return (
         <div className='nav'>
             <div className='header'>
-                <img src={session.user_metadata.picture} id='navbar_profile'/>
+                <img src={session.user_metadata.picture} alt='User profile' id='navbar_profile'/>
                 <strong>Chats</strong>
             </div>
             <div className='chats'>

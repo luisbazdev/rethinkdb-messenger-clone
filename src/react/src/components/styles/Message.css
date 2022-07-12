@@ -1,8 +1,44 @@
+#options{
+    color: #a7a7a7;
+    cursor: pointer;
+    width: 17px;
+}
+
+.options{
+    margin-bottom: 50px;
+    border: 1px solid #bcbcbc;
+    border-radius: 5px;
+    background-color: #FFF;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+}
+
+.options_box{
+    position: relative;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+
+.options_box_toggled{
+    display: flex;
+}
+
 .message_box{
     width: 100%;
     display: flex;
-    /* align-items: center; */
     position: relative;
+}
+
+.message_box:hover .options_box{
+    display: flex;
+}   
+
+.message{
+    display: flex;
+    align-items: flex-end;
 }
 
 .message_content{
@@ -31,9 +67,15 @@
     justify-content: flex-end;
 }
 
-.own .message_content{
+.message_own{
     color: #fff;
     background-color: rgb(23, 122, 252);
+}
+
+.message_unsent{
+    background-color:#ffffff;
+    border: 1px solid #cccccc;
+    color: #8a8a8a;
 }
 
 .message_date{
@@ -54,9 +96,4 @@
 
 .message_content:hover .message_date{
     display: flex;
-}
-
-.message{
-    display: flex;
-    align-items: flex-end;
 }

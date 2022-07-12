@@ -5,6 +5,7 @@ import App from "./components/App";
 
 import { ChatProvider } from "./contexts/ChatContext";
 import { AuthProvider } from "./contexts/AuthContext";
+import { ModalProvider } from "./contexts/ModalContext";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root")
@@ -13,8 +14,9 @@ const root = ReactDOM.createRoot(
 root.render(
   <AuthProvider>
     <ChatProvider>
-      <App/>
+      <ModalProvider>
+        <App/>
+      </ModalProvider>
     </ChatProvider>
   </AuthProvider>
-
 );

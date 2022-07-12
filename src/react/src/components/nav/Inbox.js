@@ -17,7 +17,7 @@ export default function Inbox({session, inbox, selected}){
 
     function addLastMessage(message){
         if(message){
-            const _formattedMessage = formatMessage(session.user_metadata.uid, message, inbox.user_name);
+            const _formattedMessage = formatMessage(session.user_metadata.sub, message, inbox.user_name);
             setLastMessage(_formattedMessage);
         }
     }
@@ -31,7 +31,12 @@ export default function Inbox({session, inbox, selected}){
 
     useEffect(() => {
         socket.on('received message', (_message) => {
-            if((_message.new_val.target == inbox.user_id) || (_message.new_val.from == inbox.user_id))
+            if((_message.new_val.target === inbox.user_id) || (_message.new_val.from === inbox.user_id))
+                addLastMessage(_message.new_val);
+        })
+
+        socket.on('unsent message', (_message) => {
+            if((_message.new_val.target === inbox.user_id) || (_message.new_val.from === inbox.user_id))
                 addLastMessage(_message.new_val);
         })    
 
@@ -42,7 +47,7 @@ export default function Inbox({session, inbox, selected}){
 
     return (
         <div className='inbox' id={selected ? 'selected' : ''}>
-            <img id='inbox_profile' src={inbox.avatar_url}/>
+            <img id='inbox_profile' alt='User profile' src={inbox.avatar_url}/>
             <div className='details'>
                 <p>{inbox.user_name}</p>
                 <p className='inbox_last_message'>{lastMessage}</p>

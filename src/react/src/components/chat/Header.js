@@ -8,7 +8,7 @@ export default function Header(){
 
     return (
         <div className='chat_header'>
-            <img id='chat_profile' src={currentChat.avatar_url}/>
+            <img id='chat_profile' alt='User profile' src={currentChat.avatar_url}/>
             <div className='chat_user_info'>
                 <p>{currentChat.user_name}</p>
             </div>
