@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 import '../styles/RemoveMessageModal.css';
 
@@ -30,9 +30,9 @@ export default function RemoveMessageModal({message}){
                 </div>
 
                 <form onChange={(e) => setUnsentFor(e.target.value)}>
-                    {session.user_metadata.sub === message.from && (
+                    {(session.user_metadata.sub === message.from && message.unsentForAll !== true) && (
                         <div className='modal_section'>
-                            <input type='radio' name='unsendFor' value='everyone' ref={everyone}/> 
+                            <input type='radio' name='unsentFor' value='everyone' ref={everyone}/> 
 
                             <div className='modal_select'>
                                 <h3 className='modal_option' onClick={() => everyone.current.click()}>Unsend for everyone</h3>
@@ -45,7 +45,7 @@ export default function RemoveMessageModal({message}){
                     )} 
 
                     <div className='modal_section'>
-                        <input type='radio' name='unsendFor' value={session.user_metadata.sub} ref={myself}/>
+                        <input type='radio' name='unsentFor' value={session.user_metadata.sub} ref={myself}/>
 
                         <div className='modal_select'>
                             <h3 className='modal_option' onClick={() => myself.current.click()}>Remove for you</h3>

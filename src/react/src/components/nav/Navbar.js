@@ -6,7 +6,7 @@ import { supabase } from '../../supabase';
 
 import Inbox from './Inbox';
 
-import { Link, Navigate }  from 'react-router-dom'
+import { Link }  from 'react-router-dom'
 
 import { AuthContext } from "../../contexts/AuthContext";
 import { ChatContext } from "../../contexts/ChatContext";

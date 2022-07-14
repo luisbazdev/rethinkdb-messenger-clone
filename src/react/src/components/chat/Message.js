@@ -41,6 +41,7 @@ export default function Message({message, own, unsent, setToggled, toggled, sess
                                 setSeeRemoveMessageModal(true)
                                 setToggled(null)
                             }}>Remove</button>
+                            <button>Forward</button>
                         </div>}
                         <BsThreeDotsVertical id='options' onClick={() => {
                             if(!toggled)
@@ -54,7 +55,7 @@ export default function Message({message, own, unsent, setToggled, toggled, sess
                 {!unsent ? (
                     <div>
                         {message.message && 
-                            <div className='message_content message_own'>
+                            <div className={`message_content ${own ? 'message_own' : ''}`}>
                                 <p>{message.message}</p>
                             </div>
                         }
@@ -89,6 +90,7 @@ export default function Message({message, own, unsent, setToggled, toggled, sess
                                 setSeeRemoveMessageModal(true)
                                 setToggled(null)
                             }}>Remove</button>
+                            <button>Forward</button>
                         </div>}
                         <BsThreeDotsVertical id='options' onClick={() => {
                             if(!toggled)

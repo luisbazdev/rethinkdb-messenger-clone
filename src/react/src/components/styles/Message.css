@@ -5,19 +5,22 @@
 }
 
 .options{
-    margin-bottom: 50px;
+    margin-bottom: 70px;
     border: 1px solid #bcbcbc;
     border-radius: 5px;
-    background-color: #FFF;
+    background-color: #fff;
     position: absolute;
     display: flex;
     flex-direction: column;
+    row-gap: 5px;
+    /* padding: 5px 0; */
 }
 
 .options_box{
     position: relative;
     display: none;
     flex-direction: column;
+    align-items: center;
     justify-content: center;
     height: 100%;
 }

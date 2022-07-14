@@ -48,9 +48,9 @@ db.then((conn) => {
             if(row.new_val.unsent === true){
                 var { from, target } = row.new_val;
 
-                row.new_val.unsentFor === 'everyone' 
+                row.new_val.unsentForAll === true 
                 ? app.get('socketService').emit(from, target, 'unsent message', row)
-                : app.get('socketService').emit(row.new_val.unsentFor, null, 'unsent message', row)
+                : app.get('socketService').emit(row.new_val.unsentFor[0], null, 'unsent message', row)
             }
             else{
                 var { from, target } = row.new_val;
@@ -73,7 +73,7 @@ db.then((conn) => {
         var filter = ( 
             ((r.row('from').eq(from).and(r.row('target').eq(target)))
             .or(r.row('from').eq(target).and(r.row('target').eq(from))))
-            .and(r.row('unsentFor').eq(from).not())
+            .and(r.row('unsentFor').contains(from).not())
         );
 
         // Make this cleaner
@@ -125,6 +125,10 @@ db.then((conn) => {
     
         if(!message)
             r.table('messages').insert({
+                unsent: false,
+                unsentFor: [],
+                unsentForAll: false,
+                unsentAt: null,
                 from,
                 target,
                 file_path,
@@ -134,6 +138,10 @@ db.then((conn) => {
             
         else
             r.table('messages').insert({
+                unsent: false,
+                unsentFor: [],
+                unsentForAll: false,
+                unsentAt: null,
                 from,
                 target,
                 message,
@@ -153,10 +161,20 @@ db.then((conn) => {
         var { messageId } = req.params;
 
         if(unsentFor === 'everyone')
-            r.table('messages').get(messageId).update({unsent: true, unsentFor, unsentAt: new Date(), message: null, file_path: null, file_ext: null}).run(connection);
+            r.table('messages').get(messageId).update({
+                unsent: true,
+                unsentForAll: true, 
+                unsentAt: new Date(), 
+                message: null, 
+                file_path: null, 
+                file_ext: null
+            }).run(connection);
             
         else
-            r.table('messages').get(messageId).update({unsent: true, unsentFor, unsentAt: new Date()}).run(connection);
+            r.table('messages').get(messageId).update({
+                unsent: true,
+                unsentFor: r.row('unsentFor').prepend(unsentFor)
+            }).run(connection);
 
         res.status(200).end();
     });
