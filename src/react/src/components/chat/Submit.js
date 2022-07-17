@@ -32,7 +32,8 @@ export default function Submit(){
 
     const filePicker = useRef(null);;
 
-    async function sendMessage(){
+    async function sendMessage(e){
+        e.preventDefault();
         // Send the message and the file separately
         if(message !== ''){
             axios.post(`${process.env.REACT_APP_DOMAIN}/api/messages`, {
@@ -117,7 +118,9 @@ export default function Submit(){
                 <div className='chat_files'>
                     { previews.length > 0 && previews.map((_preview, index) => <Preview file={files[index]} preview={_preview}/>)}
                 </div>
-                <input type='text' placeholder='Aa' value={message} onChange={onMessageChange}/>
+                <form onSubmit={sendMessage}>
+                    <input type='text' placeholder='Aa' value={message} onChange={onMessageChange}/>
+                </form>
             </div>
             <MdSend className='icon' onClick={sendMessage}/>
     </div>
